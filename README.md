@@ -1,6 +1,4 @@
-Absolutely — here is the complete GitHub-ready README so you can copy/paste it directly into `README.md`.
 
-````markdown
 # Smart Document Scanner
 
 > A React Native / Expo mobile document-scanning platform with on-device capture processing, OCR/AI capabilities, local-first document storage, PDF export, and a layered monetization system.
@@ -32,7 +30,7 @@ The project currently targets the following core runtime stack:
 
 ---
 
-# PAGE 1 — Product Overview and Design Goals
+# Product Overview and Design Goals
 
 ## What the app does
 
@@ -101,7 +99,7 @@ The Expo Router app currently exposes routes including:
 
 ---
 
-# PAGE 2 — Repository Architecture
+#  Repository Architecture
 
 The source tree follows a layered, feature-oriented architecture.
 
@@ -190,7 +188,7 @@ This becomes particularly important as AI and monetization grow. AI inference ca
 
 ---
 
-# PAGE 3 — Camera Capture and Image Processing Pipeline
+# Camera Capture and Image Processing Pipeline
 
 The original scanner architecture is centered on a:
 
@@ -320,7 +318,7 @@ type PageAsset = {
 
 ---
 
-# PAGE 4 — Document Data, Persistence, and Offline-First Behavior
+#  Document Data, Persistence, and Offline-First Behavior
 
 The document layer separates metadata from the underlying binary assets.
 
@@ -431,7 +429,7 @@ This distinction prevents a common architectural failure where search state beco
 
 ---
 
-# PAGE 5 — Advanced AI and Intelligent Documents
+# Advanced AI and Intelligent Documents
 
 The AI layer is organized as a platform rather than one monolithic `AIService`.
 
@@ -550,7 +548,7 @@ The scanner and PDF exporter should continue working even when AI services are d
 
 ---
 
-# PAGE 6 — Monetization Architecture
+#  Monetization Architecture
 
 Monetization is modeled as a first-class domain because it touches:
 
@@ -655,7 +653,7 @@ This makes pricing tests possible without coupling experiments to the payment SD
 
 ---
 
-# PAGE 7 — Paywalls, Pricing Experiments, Ads, and Retention
+# Paywalls, Pricing Experiments, Ads, and Retention
 
 The monetization system includes a commercial control plane around the basic paywall.
 
@@ -773,7 +771,7 @@ A payment should still succeed when analytics transport is unavailable.
 
 ---
 
-# PAGE 8 — Security, Privacy, Networking, and Reliability
+#  Security, Privacy, Networking, and Reliability
 
 The scanner handles potentially sensitive documents.
 
@@ -884,7 +882,7 @@ Sharing should remain explicit.
 
 ---
 
-# PAGE 9 — Testing, CI/CD, Performance, and Release Engineering
+#  Testing, CI/CD, Performance, and Release Engineering
 
 The project contains Jest-oriented tests across core, advanced, AI, and monetization domains.
 
@@ -1005,7 +1003,7 @@ Use development/release builds that contain the required native modules and vali
 
 ---
 
-# PAGE 10 — Developer Guide, Contribution Rules, and Roadmap
+#   Developer Guide, Contribution Rules, and Roadmap
 
 ## Installation
 
@@ -1406,7 +1404,4 @@ Also review the licenses and redistribution terms of:
 
 before distributing the app commercially.
 
-```
-
-This README is based on the existing project README and architecture you provided, including its stated React Native/Expo stack, scanner pipeline, AI layer, persistence model, monetization system, security boundaries, and release workflow. :contentReference[oaicite:0]{index=0}
 ```
