@@ -1,0 +1,5 @@
+import { describe,expect,it } from 'vitest';
+import { assessDetectorQuality } from '../src/modules/scanner/services/DetectorQuality';
+import { beginCapture,beginProcessing,completeProcessing,failProcessing,resetSession } from '../src/modules/scanner/session/scanSession';
+describe('detector quality',()=>{it('scores a valid quadrilateral',()=>{const quality=assessDetectorQuality({topLeft:{x:.1,y:.1},topRight:{x:.9,y:.1},bottomRight:{x:.9,y:.9},bottomLeft:{x:.1,y:.9}});expect(quality.isValid).toBe(true);expect(quality.confidence).toBeGreaterThan(0)});it('rejects missing edges',()=>{expect(assessDetectorQuality(null).isValid).toBe(false)})});
+describe('scan session',()=>{it('moves through capture and processing states',()=>{expect(beginCapture().status).toBe('capturing');expect(beginProcessing('file://a').status).toBe('processing');expect(completeProcessing('file://a').status).toBe('ready')});it('preserves failure details and resets',()=>{expect(failProcessing('camera failed').error).toBe('camera failed');expect(resetSession().status).toBe('idle')})});

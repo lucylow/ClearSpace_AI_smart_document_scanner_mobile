@@ -1,0 +1,5 @@
+export interface StorageUsageInput{pdfUri?:string;thumbnailUri?:string;pages?:{originalUri?:string;processedUri?:string}[]}
+export interface StorageQuotaSummary{usedBytes:number;limitBytes:number;percent:number;label:string;canClean:boolean}
+const estimateUri=(uri?:string)=>uri?Math.max(1024,uri.length*2):0
+export function summarizeStorage(scans:StorageUsageInput[],limitBytes=250*1024*1024):StorageQuotaSummary{const usedBytes=scans.reduce((total,scan)=>total+estimateUri(scan.pdfUri)+estimateUri(scan.thumbnailUri)+(scan.pages??[]).reduce((pageTotal,page)=>pageTotal+estimateUri(page.originalUri)+estimateUri(page.processedUri),0),0);const percent=Math.min(100,Math.round((usedBytes/limitBytes)*100));return{usedBytes,limitBytes,percent,label:`${formatBytes(usedBytes)} of ${formatBytes(limitBytes)} used`,canClean:usedBytes>0}}
+export function formatBytes(bytes:number){if(bytes<1024)return`${bytes} B`;if(bytes<1024*1024)return`${Math.round(bytes/1024)} KB`;return`${(bytes/(1024*1024)).toFixed(1)} MB`}

@@ -1,0 +1,2 @@
+import React from 'react'; import { Text,StyleSheet } from 'react-native'; import { useUserStore } from '@/src/core/store/userStore';
+export function CreditCounter(){const pro=useUserStore(s=>s.isPro),credits=useUserStore(s=>s.credits);return <Text style={styles.text}>{pro?'PRO':'Credits'} · {pro?'∞':credits}</Text>}; const styles=StyleSheet.create({text:{color:'#fff',fontWeight:'700',backgroundColor:'#122033CC',paddingHorizontal:12,paddingVertical:7,borderRadius:16}});

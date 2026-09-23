@@ -1,0 +1,3 @@
+import { DocumentEntity,SyncState } from '../types/domain'
+export interface SyncSummary{total:number;byState:Record<SyncState,number>;needsAttention:number;label:string}
+export function summarizeSync(documents:DocumentEntity[]):SyncSummary{const byState:Record<SyncState,number>={local:0,pending:0,synced:0,conflict:0,error:0};for(const document of documents)byState[document.syncState]+=1;const needsAttention=byState.pending+byState.conflict+byState.error;const label=byState.error?'Sync errors':byState.conflict?'Conflicts need review':byState.pending?'Changes pending':'All changes saved';return{total:documents.length,byState,needsAttention,label}}

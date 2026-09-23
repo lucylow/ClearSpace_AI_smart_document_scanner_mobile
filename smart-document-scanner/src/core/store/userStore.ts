@@ -1,0 +1,13 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { create } from 'zustand'
+import { addCredits as addCreditBalance,canConsumeCredit,consumeCredits } from './credits'
+import { deriveEntitlements } from '@/src/monetization/core'
+import { loadEntitlementCache,saveEntitlementCache } from '@/src/monetization/entitlementCache'
+const KEY='smart-scanner-user'
+type State={isPro:boolean;subscriptionTier:string;credits:number;hydrate:()=>Promise<void>;consumeCredit:()=>boolean;addCredits:(n:number)=>Promise<void>;setPro:(value:boolean)=>Promise<void>}
+type PersistedState=Pick<State,'isPro'|'subscriptionTier'|'credits'>
+const DEFAULT_STATE:PersistedState={isPro:false,subscriptionTier:'free',credits:5}
+function normalizeState(value:unknown):PersistedState{if(!value||typeof value!=='object')return DEFAULT_STATE;const candidate=value as Partial<PersistedState>;return{isPro:typeof candidate.isPro==='boolean'?candidate.isPro:DEFAULT_STATE.isPro,subscriptionTier:typeof candidate.subscriptionTier==='string'?candidate.subscriptionTier:DEFAULT_STATE.subscriptionTier,credits:typeof candidate.credits==='number'&&Number.isFinite(candidate.credits)&&candidate.credits>=0?Math.floor(candidate.credits):DEFAULT_STATE.credits}}
+async function persist(state:PersistedState){try{await AsyncStorage.setItem(KEY,JSON.stringify(normalizeState(state)))}catch{return}}
+async function persistEntitlement(isPro:boolean,credits:number){try{await saveEntitlementCache(deriveEntitlements(isPro?'monthly':'free',credits,'legacy'))}catch{return}}
+export const useUserStore=create<State>((set,get)=>({ ...DEFAULT_STATE,hydrate:async()=>{try{const raw=await AsyncStorage.getItem(KEY);if(raw){set(normalizeState(JSON.parse(raw)));return}const cached=await loadEntitlementCache();if(cached){set(normalizeState({isPro:cached.state.tier!=='free',subscriptionTier:cached.state.tier,credits:cached.state.credits}))}}catch{return}},consumeCredit:()=>{const state=get();if(!canConsumeCredit(state.isPro,state.credits))return false;const credits=consumeCredits(state.isPro,state.credits);const next={...state,credits};set({credits});void persist(next).catch(()=>undefined);return true},addCredits:async(amount)=>{if(!Number.isFinite(amount)||amount<=0)return;const state=get();const credits=addCreditBalance(state.credits,Math.floor(amount));set({credits});await persist({...state,credits});await persistEntitlement(state.isPro,credits)},setPro:async(isPro)=>{const subscriptionTier=isPro?'monthly':'free';const state=get();set({isPro,subscriptionTier});await persist({...state,isPro,subscriptionTier});await persistEntitlement(isPro,state.credits)}}))

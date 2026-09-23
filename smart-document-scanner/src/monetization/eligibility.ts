@@ -1,0 +1,4 @@
+import type { CatalogProduct } from './core'
+export type EligibilityReason='eligible'|'already-owned'|'trial-unavailable'
+export function offerEligibility(product:CatalogProduct,ownedProductIds:string[]=[],trialAvailable=true):{eligible:boolean;reason:EligibilityReason}{if(ownedProductIds.includes(product.id))return{eligible:false,reason:'already-owned'};if(product.intro&&!trialAvailable)return{eligible:true,reason:'trial-unavailable'};return{eligible:true,reason:'eligible'}}
+export function checkoutTerms(product:CatalogProduct){if(product.tier==='lifetime')return'One-time purchase. No recurring renewal.';return product.intro?.durationDays?`${product.intro.durationDays}-day introduction, then renews ${product.interval==='year'?'yearly':'monthly'} at the listed price.`:`Renews ${product.interval==='year'?'yearly':'monthly'} at the listed price.`}

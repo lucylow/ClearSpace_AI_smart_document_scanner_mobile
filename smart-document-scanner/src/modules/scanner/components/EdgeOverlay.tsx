@@ -1,0 +1,2 @@
+import React from 'react'; import { View,StyleSheet } from 'react-native'; import { EdgePoints } from '@/src/core/types';
+export function EdgeOverlay({points}:{points:EdgePoints|null}){return <View pointerEvents="none" style={StyleSheet.absoluteFill}><View style={styles.frame}/></View>}; const styles=StyleSheet.create({frame:{position:'absolute',left:'10%',right:'10%',top:'20%',bottom:'20%',borderColor:'#8B9CFF',borderWidth:2,borderRadius:18}});

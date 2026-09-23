@@ -1,0 +1,4 @@
+import { EdgePoints } from '@/src/core/types';
+export type DetectorQuality={confidence:number;isValid:boolean;message:string}
+function distance(a:{x:number;y:number},b:{x:number;y:number}){return Math.hypot(a.x-b.x,a.y-b.y)}
+export function assessDetectorQuality(edges:EdgePoints|null):DetectorQuality{if(!edges)return{confidence:0,isValid:false,message:'Document not detected'};const points=[edges.topLeft,edges.topRight,edges.bottomRight,edges.bottomLeft];const inBounds=points.every(p=>p.x>=0&&p.x<=1&&p.y>=0&&p.y<=1);const width=distance(edges.topLeft,edges.topRight);const height=distance(edges.topLeft,edges.bottomLeft);const confidence=inBounds?Math.min(1,Math.max(0,(width*height)*2.2)):0;return{confidence,isValid:inBounds&&width>.2&&height>.2,message:inBounds?'Document edges detected':'Move the document inside the frame'}}

@@ -1,0 +1,6 @@
+import { describe,expect,it } from 'vitest';
+import { canSharePdf,shareFailureMessage } from '../src/core/services/shareResult';
+import { appendReviewPage,removeReviewPage,selectedPageIndex } from '../src/core/services/reviewPages';
+const pages=[{source:'a',preview:'a',filter:'original'},{source:'b',preview:'b',filter:'enhanced'}];
+describe('review pages',()=>{it('appends a page without mutating the source list',()=>{expect(appendReviewPage(pages,{source:'c',preview:'c',filter:'original'})).toHaveLength(3);expect(pages).toHaveLength(2)});it('removes a selected page but keeps one-page reviews intact',()=>{expect(removeReviewPage(pages,0)).toHaveLength(1);expect(removeReviewPage(pages.slice(0,1),0)).toHaveLength(1)});it('clamps selection to available pages',()=>{expect(selectedPageIndex(pages,8)).toBe(1);expect(selectedPageIndex([],3)).toBe(0)})});
+describe('share helpers',()=>{it('accepts native file and web document URIs',()=>{expect(canSharePdf('file:///tmp/scan.pdf','ios')).toBe(true);expect(canSharePdf('https://example.com/scan.pdf','web')).toBe(true);expect(canSharePdf('','android')).toBe(false)});it('returns actionable failure text',()=>{expect(shareFailureMessage('')).toMatch(/not created/)})});

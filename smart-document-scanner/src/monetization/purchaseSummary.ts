@@ -1,0 +1,2 @@
+import { CatalogProduct,formatMoney } from './core'
+export function purchaseSummary(product:CatalogProduct){const cadence=product.interval?` billed per ${product.interval}`:' one-time';const trial=product.intro?.durationDays?` Includes a ${product.intro.durationDays}-day introduction.`:'';return `${product.tier==='lifetime'?'Lifetime Pro':'Pro'} · ${formatMoney(product.priceMicros)}${cadence}.${trial}`}

@@ -1,0 +1,126 @@
+import { describe, expect, it } from 'vitest';
+import { createMemoryStorage } from '../src/core/storage/StorageAdapter';
+import { paywallLabel, paywallPlanLabel, paywallProductPrice, scannerQualityMessage, scannerStorageWarning, securityLabel } from '../src/core/storage/cleanupRecovery';
+import { actionCopy, batchCopy, clearLanguagePreference, documentMetaCopy, documentNoticeCopy, documentPresentationCopy, historyCopy, inspectorCopy, languagePreferenceCopy, loadLanguagePreference, localizedFilterName, localizedSubscriptionDiagnostics, normalizeAppLanguage, recoveryBackupAgeLabel, recoveryLastSavedLabel, settingsDiagnosticCopy, errorBoundaryCopy, externalLinkCopy, lockCopy, paywallErrorCopy, previewCopy, recoveryStatusCopy, reviewFallbackCopy, reviewFeedbackCopy, paywallSurfaceCopy, resolveAppLocale, saveLanguagePreference } from '../src/core/i18n/localePreference';
+
+describe('app language preference', () => {
+  it('normalizes supported regional language tags and rejects unsupported values', () => {
+    expect(normalizeAppLanguage('pt-BR')).toBe('pt');
+    expect(normalizeAppLanguage('ES_mx')).toBeNull();
+    expect(normalizeAppLanguage('de-DE')).toBeNull();
+    expect(normalizeAppLanguage(null)).toBeNull();
+  });
+
+  it('prefers an explicit choice and falls back to the supported device language or English', () => {
+    expect(resolveAppLocale('fr', 'pt-BR')).toBe('fr');
+    expect(resolveAppLocale(null, 'pt-BR')).toBe('pt');
+    expect(resolveAppLocale(null, 'de-DE')).toBe('en');
+  });
+
+  it('resolves localized preference copy with English fallback', () => {
+    expect(languagePreferenceCopy('fr-FR').reset).toBe('Utiliser la langue de l’appareil');
+    expect(languagePreferenceCopy('pt-BR').usingDevice).toBe('Usando o idioma do dispositivo');
+    expect(languagePreferenceCopy('de-DE').title).toBe('Language');
+  });
+
+  it('resolves localized document actions with English fallback', () => {
+    expect(actionCopy('es-MX').sharePdf).toBe('Compartir PDF');
+    expect(actionCopy('fr-FR').deleteDocument).toBe('Supprimer le document');
+    expect(actionCopy('pt-BR').cancel).toBe('Cancelar');
+    expect(actionCopy('de-DE').restore).toBe('Restore');
+    expect(actionCopy('fr-FR').pageOf(2, 4)).toBe('Page 2 sur 4');
+    expect(actionCopy('pt-BR').saveCrop).toBe('Salvar recorte');
+    expect(actionCopy('de-DE').nextPage).toBe('Next');
+    expect(inspectorCopy('es-MX').guidance).toContain('Desliza');
+    expect(inspectorCopy('fr-FR').filterError).toContain('Impossible');
+    expect(historyCopy('es-MX').title).toBe('Historial de ediciones');
+    expect(historyCopy('pt-BR').backToDocuments).toBe('Voltar aos documentos');
+    expect(historyCopy('de-DE').restoreUnavailableTitle).toBe('Revert unavailable');
+    expect(documentMetaCopy('fr-FR').pageLabel(3)).toBe('Page 3');
+    expect(documentMetaCopy('pt-BR').originalCapture).toBe('Captura original');
+    expect(documentMetaCopy('de-DE').renameTitle).toBe('Rename document');
+    expect(documentPresentationCopy('es-MX').eyebrow).toBe('DETALLES DEL DOCUMENTO');
+    expect(documentPresentationCopy('pt-BR').readyMessage(2)).toContain('2 páginas');
+    expect(documentPresentationCopy('de-DE').readyTitle).toBe('Your document is ready');
+    expect(localizedFilterName('enhanced', 'fr-FR')).toBe('Amélioré');
+    expect(localizedFilterName('grayscale', 'es-MX')).toBe('Escala de grises');
+    expect(documentNoticeCopy('pt-BR').recoveryRefreshed).toBe('Cópia de recuperação atualizada.');
+    expect(documentNoticeCopy('de-DE').recoveryRefreshed).toBe('Recovery copy refreshed.');
+    expect(documentNoticeCopy('es-MX').renamed).toBe('Título del documento actualizado.');
+    expect(documentNoticeCopy('fr-FR').editSaved).toContain('Modification');
+    expect(documentNoticeCopy('pt-BR').pdfShared).toBe('PDF compartilhado com sucesso.');
+    expect(documentNoticeCopy('es-MX').renameFailed('Inténtalo de nuevo.')).toContain('No se pudo actualizar');
+    expect(documentNoticeCopy('fr-FR').editFailed('Réessayez.')).toContain('n’a pas pu être enregistrée');
+    expect(documentNoticeCopy('de-DE').pdfShareFailed('Try again.')).toBe('PDF could not be shared. Try again.');
+    expect(documentNoticeCopy('es-MX').deleteFailed('Inténtalo de nuevo.')).toContain('No se pudo eliminar');
+    expect(documentNoticeCopy('fr-FR').restoreFailed('Réessayez.')).toContain('n’a pas pu être restaurée');
+    expect(documentNoticeCopy('de-DE').restoreFailed('Try again.')).toBe('Saved version could not be restored. Try again.');
+    expect(documentNoticeCopy('es-MX').deleteFailed('Inténtalo de nuevo.')).toContain('No se pudo eliminar');
+    expect(documentNoticeCopy('pt-BR').restoreFailed('Tente novamente.')).toContain('Não foi possível restaurar');
+    expect(documentNoticeCopy('es-MX').galleryDeleted('Informe')).toBe('Informe se eliminó.');
+    expect(documentNoticeCopy('fr-FR').galleryRestored('Rapport')).toBe('Rapport a été restauré.');
+    expect(documentNoticeCopy('pt-BR').galleryRefreshFailed('Tente novamente.')).toContain('Não foi possível atualizar');
+    expect(documentNoticeCopy('de-DE').searchIndexFailed('Search may be incomplete.')).toBe('Search index unavailable. Search may be incomplete.');
+    expect(securityLabel('webDemoMode', 'es-MX')).toBe('MODO DEMO WEB');
+    expect(securityLabel('cameraPreviewSimulated', 'fr-FR')).toContain('simulé');
+    expect(securityLabel('openDocumentLibrary', 'pt-BR')).toBe('Abrir biblioteca de documentos');
+    expect(scannerQualityMessage('Move the document inside the frame', 'fr-FR')).toBe('Déplacez le document dans le cadre');
+    expect(scannerStorageWarning('nearlyFull', '95%', 2, '4 MB', 'pt-BR')).toContain('quase cheio');
+    expect(scannerQualityMessage('Unknown detector message', 'de-DE')).toBe('Document not detected');
+    expect(paywallErrorCopy('fr-FR').purchaseFailed('Réessayez.')).toContain('Impossible de terminer');
+    expect(paywallErrorCopy('pt-BR').storeRefreshFailed('Tente novamente.')).toContain('atualizar o estado da loja');
+    expect(paywallErrorCopy('de-DE').restoreStateFailed('Try again.')).toBe('Unable to restore paywall state. Try again.');
+    expect(paywallLabel('proIncludes', 'es-MX')).toContain('exportaciones ilimitadas');
+    expect(paywallPlanLabel('ocrWatermarkFree', 'fr-FR')).toContain('sans filigrane');
+    expect(paywallProductPrice('9,99 €', 'month', 'pt-BR')).toContain('mês');
+    expect(paywallSurfaceCopy('fr-FR').confirmPurchase).toBe('Confirmer l’achat');
+    expect(paywallSurfaceCopy('es-MX').selectYearlyA11y).toBe('Elegir plan Pro anual');
+    expect(paywallSurfaceCopy('pt-BR').pendingPurchase('pro_monthly')).toContain('Compra pendente');
+    expect(paywallSurfaceCopy('de-DE').notNow).toBe('Not now');
+    expect(lockCopy('fr-FR').unlock).toBe('Déverrouiller');
+    expect(lockCopy('pt-BR').authIncomplete).toContain('autenticação');
+    expect(lockCopy('de-DE').title).toBe('Documents locked');
+    expect(errorBoundaryCopy('fr-FR').retry).toBe('Réessayer');
+    expect(errorBoundaryCopy('pt-BR').screenFailed).toContain('exibir a tela');
+    expect(errorBoundaryCopy('de-DE').hint).toContain('local documents');
+    expect(previewCopy('fr-FR').share).toBe('Partager le PDF');
+    expect(previewCopy('pt-BR').page(2)).toBe('2 páginas');
+    expect(previewCopy('de-DE').noDocument).toBe('No active document');
+    expect(recoveryStatusCopy('es-MX').restore).toBe('Restaurar');
+    expect(reviewFeedbackCopy('fr-FR').retry).toBe('Réessayer l’exportation');
+    expect(reviewFeedbackCopy('pt-BR').processed(2, 4)).toBe('2 de 4 páginas processadas');
+    expect(reviewFeedbackCopy('de-DE').copyDiagnostics).toBe('Copy sanitized diagnostics');
+    expect(externalLinkCopy('es-MX').open).toBe('Abrir enlace');
+    expect(externalLinkCopy('fr-FR').failureMessage).toContain('connexion');
+    expect(externalLinkCopy('de-DE').failureTitle).toBe('Unable to open link');
+    expect(batchCopy('fr-FR').permissionFallback).toContain('autorisations');
+    expect(batchCopy('pt-BR').processFallback).toContain('processar');
+    expect(batchCopy('es-MX').exportFallback).toContain('exportar');
+    expect(reviewFallbackCopy('fr-FR').exportFailed).toContain('créer le PDF');
+    expect(reviewFallbackCopy('pt-BR').cameraNoImage).toContain('câmera');
+    expect(reviewFallbackCopy('de-DE').retryExport).toBe('Retry export');
+    expect(localizedSubscriptionDiagnostics({ tier: 'yearly', provider: 'local', cache: 'fresh', lastAction: 'restore' }, 'fr-FR')).toContain('Pro annuel');
+    expect(localizedSubscriptionDiagnostics({ tier: 'free', provider: 'production', cache: 'missing', lastAction: 'none' }, 'de-DE')).toContain('Subscription diagnostics');
+    expect(settingsDiagnosticCopy('fr-FR').savePreferenceFailed('Détail')).toContain('Impossible d’enregistrer');
+    expect(settingsDiagnosticCopy('pt-BR').restoreSettingsFailed('Detalhe')).toContain('Não foi possível restaurar');
+    expect(recoveryBackupAgeLabel(Date.now() - 2 * 60 * 60 * 1000, Date.now(), 'fr-FR')).toContain('Enregistré il y a 2 heures');
+    const savedAt = Date.UTC(2026, 0, 15, 13, 30);
+    expect(recoveryLastSavedLabel(savedAt, 'en-US')).toContain('Last saved:');
+    expect(recoveryLastSavedLabel(savedAt, 'fr-CA')).toContain('Dernier enregistrement:');
+    expect(recoveryLastSavedLabel(savedAt, 'pt-BR')).toContain('Último salvamento:');
+    expect(recoveryLastSavedLabel(savedAt, 'xx-XX')).toContain('Last saved:');
+    expect(recoveryBackupAgeLabel(null, Date.now(), 'de-DE')).toBe('No recovery copy is available yet.');
+  });
+
+  it('persists and clears the selected language through the storage adapter', async () => {
+    const storage = createMemoryStorage();
+    expect(await loadLanguagePreference(storage)).toBeNull();
+    await saveLanguagePreference('es', storage);
+    expect(await loadLanguagePreference(storage)).toBe('es');
+    await storage.set('smart-document-scanner.language-preference', 'de');
+    expect(await loadLanguagePreference(storage)).toBeNull();
+    await saveLanguagePreference('fr', storage);
+    await clearLanguagePreference(storage);
+    expect(await loadLanguagePreference(storage)).toBeNull();
+  });
+});

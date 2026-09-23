@@ -1,0 +1,4 @@
+import { BillingTier } from './core'
+export type ProviderReadiness='local'|'production-ready'
+export function summarizeSubscription(tier:BillingTier,cachedAt?:number,expiresAt?:number,now=Date.now()){if(tier==='free')return{label:'Free plan',detail:'5 export credits available',fresh:false};if(expiresAt&&now>=expiresAt)return{label:'Pro refresh needed',detail:'Restore purchases to confirm access',fresh:false};const detail=expiresAt?`Access refreshes in ${Math.max(1,Math.ceil((expiresAt-now)/3600000))}h`:'Pro access active';return{label:tier==='lifetime'?'Lifetime Pro':'Pro plan',detail,fresh:Boolean(cachedAt&&expiresAt)}}
+export function providerReadiness(mode:ProviderReadiness){return mode==='production-ready'?{ready:true,label:'Store billing connected'}:{ready:false,label:'Local development billing; purchases are simulated'}}

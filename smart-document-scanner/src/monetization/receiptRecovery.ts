@@ -1,0 +1,2 @@
+export type ReceiptRecoveryState='interrupted-purchase'|'stale-entitlement'|'no-purchase'|'ready'
+export function receiptRecoveryCopy(state:ReceiptRecoveryState){switch(state){case'interrupted-purchase':return'Your purchase may still be processing. Restore purchases to refresh access before trying again.';case'stale-entitlement':return'Your saved access needs a store refresh. Restore purchases to verify your subscription.';case'no-purchase':return'No purchase was found on this store account.';default:return'Subscription status is current.'}}
