@@ -3,6 +3,8 @@
 
 > A React Native / Expo mobile document-scanning platform with on-device capture processing, OCR/AI capabilities, local-first document storage, PDF export, and a layered monetization system.
 
+> ClearSpace AI is a privacy-conscious mobile storage intelligence application designed to help people understand what is consuming space on their phones, identify duplicate and redundant media, surface large files and cleanup opportunities, and make safer cleanup decisions with AI-assisted explanations. 
+
 ![React Native](https://img.shields.io/badge/React%20Native-0.74-blue)
 ![Expo](https://img.shields.io/badge/Expo-SDK%2051-000020)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-3178C6)
