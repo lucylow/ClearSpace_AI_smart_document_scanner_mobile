@@ -1,5 +1,5 @@
 
-# Smart Document Scanner
+# ClearSpace AI - Smart Document Scanner
 
 > A React Native / Expo mobile document-scanning platform with on-device capture processing, OCR/AI capabilities, local-first document storage, PDF export, and a layered monetization system.
 
